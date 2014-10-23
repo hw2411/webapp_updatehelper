@@ -2,15 +2,15 @@ import win.ui;
 import fsys.dlg;
 import fsys.file;
 /*DSG{{*/
-mainForm = ..win.form( bottom=400;parent=...;right=600;text="WEB程序更新" )
+mainForm = ..win.form( bottom=400;parent=...;text="WEB程序更新";right=600 )
 mainForm.add( 
-button2={ bottom=219;text="选择输出位置";left=395;top=188;z=3;right=550;cls="button" };
-button3={ bottom=284;text="选择更新列表";left=395;top=253;z=5;right=550;cls="button" };
-progress={ bottom=345;max=100;right=322;left=40;min=0;z=8;border=1;top=322;edge=1;cls="progress" };
+button2={ bottom=219;right=550;left=395;top=188;z=3;text="选择输出位置";cls="button" };
+button3={ bottom=284;right=550;left=395;top=253;z=5;text="选择更新列表";cls="button" };
+progress={ bottom=345;max=100;right=322;border=1;top=322;z=8;left=40;min=0;edge=1;cls="progress" };
 edit={ bottom=147;right=325;left=43;top=122;z=2;edge=1;cls="edit" };
-button={ bottom=149;text="选择程序位置";left=393;top=118;z=1;right=548;cls="button" };
+button={ bottom=149;right=548;left=393;top=118;z=1;text="选择程序位置";cls="button" };
 edit3={ bottom=282;right=327;left=45;top=257;z=6;edge=1;cls="edit" };
-button4={ bottom=353;text="生成";left=398;top=322;z=7;right=553;cls="button" };
+button4={ bottom=353;right=553;left=398;top=322;z=7;text="生成";cls="button" };
 edit2={ bottom=217;right=327;left=45;top=192;z=4;edge=1;cls="edit" }
 )
 /*}}*/
@@ -31,19 +31,19 @@ mainForm.button4.oncommand = function(id,event){
 		var newupdatetext = string.replace(updatetext,"src\\","webapp\\WEB-INF\\classes\\");
 		newupdatetext = string.replace(newupdatetext,"\.java","\.class");
 		fsys.copy(soucedir+"\"+newupdatetext,targetdir+"\"+newupdatetext,,,mainForm.hwnd);
-		if(newupdatetext!=updatetext){
-			var pos=1;
-			var have=true;
-			newupdatetext = string.replace(newupdatetext,"\.class","");
-			while(1==1){
-				hava=fsys.copy(soucedir+"\"+newupdatetext+"$"+pos+".class",targetdir+"\"+newupdatetext+"$"+pos+".class",,,mainForm.hwnd);
-				if(!hava){
-					break;
-				}
-				pos++;
-			}
-			
-		}
+		var longsoucedir = soucedir+"\"+newupdatetext;
+		var parentDir = fsys.getParentDir(longsoucedir);
+		var matchname = string.right(longsoucedir,string.len(longsoucedir)-string.len(parentDir));
+		matchname = string.replace(matchname,"\.class","")+"$*";
+		var tmppath="";
+		fsys.enum(parentDir, matchname,
+     		function(dir,file,fullpath,findData){ 
+        		if(file){ 
+        		 tmppath=targetdir+string.right(fullpath,string.len(fullpath)-string.len(soucedir));
+           		 fsys.copy(fullpath,tmppath); 
+       			 }
+    	 }
+    );
 		mainForm.progress.pos=updatelist.seek()/endmark*100;
 		
  		
